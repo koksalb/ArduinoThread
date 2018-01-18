@@ -1,9 +1,9 @@
 #include "Thread.h"
 #include "ThreadController.h"
-
+#include <time.h>
 ThreadController::ThreadController(unsigned long _interval): Thread(){
 	cached_size = 0;
-
+	srand (time(NULL));
 	clear();
 	setInterval(_interval);
 
@@ -17,6 +17,7 @@ ThreadController::ThreadController(unsigned long _interval): Thread(){
 /*
 	ThreadController run() (cool stuf)
 */
+
 void ThreadController::run(){
 	// Run this thread before
 	if(_onRun != NULL)
@@ -38,6 +39,45 @@ void ThreadController::run(){
 	runned();
 }
 
+bool IsItThere(int list[], int element)
+{
+	for(int i = 0; i < sizeof(list);i++)
+	{
+		if(list[i] == element){return true;}
+		
+	}
+	return false;
+}
+void ThreadController::runRandomly(){
+	 	 
+	// Run this thread before
+	if(_onRun != NULL)
+		_onRun();
+
+	unsigned long time = millis();
+	int checks = 0;
+	int list[sizeof(thread)];
+	for(int i = 0; i < MAX_THREADS && checks <= cached_size; i++){
+		int randomnumber = rand() % MAX_THREADS;
+		while(!thread[randomnumber] && IsItThere(list,randomnumber))
+		{
+			randomnumber = rand() % MAX_THREADS;
+		}
+		list[i] = randomnumber;
+		// Object exists? Is enabled? Timeout exceeded?
+		if(thread[randomnumber]){
+			checks++;
+			if(thread[randomnumber]->shouldRun(time)){
+				thread[randomnumber]->run();
+			}
+		}
+	}
+
+	// ThreadController extends Thread, so we should flag as runned thread
+	runned();
+}
+
+
 
 /*
 	List controller (boring part)
@@ -51,6 +91,7 @@ bool ThreadController::add(Thread* _thread){
 
 	// Find an empty slot
 	for(int i = 0; i < MAX_THREADS; i++){
+		
 		if(!thread[i]){
 			// Found a empty slot, now add Thread
 			thread[i] = _thread;
@@ -65,6 +106,7 @@ bool ThreadController::add(Thread* _thread){
 
 void ThreadController::remove(int id){
 	// Find Threads with the id, and removes
+	bool found = false;
 	for(int i = 0; i < MAX_THREADS; i++){
 		if(thread[i]->ThreadID == id){
 			thread[i] = NULL;

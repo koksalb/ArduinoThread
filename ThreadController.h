@@ -30,7 +30,7 @@ public:
 
 	// run() Method is overrided
 	void run();
-
+	void runRandomly();
 	// Adds a thread in the first available slot (remove first)
 	// Returns if the Thread could be added or not
 	bool add(Thread* _thread);

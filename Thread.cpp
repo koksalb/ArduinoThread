@@ -11,7 +11,8 @@ Thread::Thread(void (*callback)(void), unsigned long _interval){
 		ThreadName = "Thread ";
 		ThreadName = ThreadName + ThreadID;
 	#endif
-
+	ThreadState = 0;
+	
 	setInterval(_interval);
 };
 
