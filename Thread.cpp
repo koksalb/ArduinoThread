@@ -1,5 +1,5 @@
 #include "Thread.h"
-
+#include <time.h>
 Thread::Thread(void (*callback)(void), unsigned long _interval){
 	enabled = true;
 	onRun(callback);
@@ -12,7 +12,7 @@ Thread::Thread(void (*callback)(void), unsigned long _interval){
 		ThreadName = ThreadName + ThreadID;
 	#endif
 	ThreadState = 0;
-	
+	TimeLimitation = 0;
 	setInterval(_interval);
 };
 
@@ -24,6 +24,8 @@ void Thread::runned(unsigned long time){
 	_cached_next_run = last_run + interval;
 }
 
+
+
 void Thread::setInterval(unsigned long _interval){
 	// Save interval
 	interval = _interval;
@@ -32,7 +34,15 @@ void Thread::setInterval(unsigned long _interval){
 	_cached_next_run = last_run + interval;
 }
 
+void Thread::waitFor(int a, int b)
+{
+	TimeLimitation = millis() + (rand() % (b-a+1)) + a ;
+}
+
 bool Thread::shouldRun(unsigned long time){
+	
+	if(millis() < TimeLimitation){ return false;}
+	
 	// If the "sign" bit is set the signed difference would be negative
 	bool time_remaining = (time - _cached_next_run) & 0x80000000;
 
@@ -41,10 +51,14 @@ bool Thread::shouldRun(unsigned long time){
 }
 
 void Thread::onRun(void (*callback)(void)){
+	if(millis() < TimeLimitation){ return;}
+	
 	_onRun = callback;
 }
 
 void Thread::run(){
+	if(millis() < TimeLimitation){ return;}
+	
 	if(_onRun != NULL)
 		_onRun();
 

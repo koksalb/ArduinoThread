@@ -19,7 +19,7 @@
 #include "Thread.h"
 #include "inttypes.h"
 
-#define MAX_THREADS		15
+#define MAX_THREADS		50
 
 class ThreadController: public Thread{
 protected:
@@ -45,6 +45,8 @@ public:
 	// Return the quantity of Threads
 	int size(bool cached = true);
 
+	void ThreadController::setRandomness(int a);
+	
 	// Return the I Thread on the array
 	// Returns NULL if none found
 	Thread* get(int index);

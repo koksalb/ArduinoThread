@@ -3,7 +3,6 @@
 #include <time.h>
 ThreadController::ThreadController(unsigned long _interval): Thread(){
 	cached_size = 0;
-	srand (time(NULL));
 	clear();
 	setInterval(_interval);
 
@@ -12,6 +11,11 @@ ThreadController::ThreadController(unsigned long _interval): Thread(){
 		ThreadName = "ThreadController ";
 		ThreadName = ThreadName + ThreadID;
 	#endif
+}
+
+void ThreadController::setRandomness(int a)
+{
+	srand (a);
 }
 
 /*
@@ -27,7 +31,7 @@ void ThreadController::run(){
 	int checks = 0;
 	for(int i = 0; i < MAX_THREADS && checks <= cached_size; i++){
 		// Object exists? Is enabled? Timeout exceeded?
-		if(thread[i]){
+		if(thread[i] && (millis() > thread[i]->TimeLimitation) ){
 			checks++;
 			if(thread[i]->shouldRun(time)){
 				thread[i]->run();
@@ -65,7 +69,7 @@ void ThreadController::runRandomly(){
 		}
 		list[i] = randomnumber;
 		// Object exists? Is enabled? Timeout exceeded?
-		if(thread[randomnumber]){
+		if(thread[randomnumber] && (millis() > thread[randomnumber]->TimeLimitation) ){
 			checks++;
 			if(thread[randomnumber]->shouldRun(time)){
 				thread[randomnumber]->run();
