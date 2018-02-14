@@ -19,7 +19,7 @@ It should be noted that these are not “threads” in the real computer-science
 
 ## Installation
 
-1. "Download":https://github.com/ivanseidel/ArduinoThread/archive/master.zip the Master branch from gitHub.
+1. "Download":https://github.com/koksalb/ArduinoThread/archive/master.zip the Master branch from gitHub.
 2. Unzip and modify the Folder name to "ArduinoThread" (Remove the '-master')
 3. Paste the modified folder on your Library folder (On your `Libraries` folder inside Sketchbooks or Arduino software).
 4. Restart Arduino IDE
@@ -105,11 +105,16 @@ StaticThreadController<3> controller (&myThread, &hisThread, &sensorReadings);
 * You have created, configured, grouped it. What is missing? Yes, whe should RUN it!
 
 ```c++
-// call run on a Thread, a ThreadController or a StaticThreadController to run it
+// call run on a Thread, a ThreadController or a StaticThreadController to run it in a LINEAR ORDER
 controller.run();
 ```
 
-This will run all the Threads that NEED to be runned.
+```c++
+// call run on a Thread, a ThreadController or a StaticThreadController to run it in a RANDOM ORDER
+controller.runRandomly();
+```
+
+This will run all the Threads that NEED to be runned, depending on the order you have chosen.
 
 Congratulations, you have learned the basics of `ArduinoThread`. If you want some TIPS, see bellow.
 
@@ -117,7 +122,7 @@ Congratulations, you have learned the basics of `ArduinoThread`. If you want som
 ### TIPs and Warnings
 
 * ThreadController is not a `LinkedList`. It's "MAXIMUM" size (the maximum Threads that it can
-  store) is defined on ThreadController.h (default is 15)
+  store) is defined on ThreadController.h (default is 50)
 
 * !!!! VERY IMPORTANT !!!! When extending `Thread` class and implementing the function
   `run()`, always remember to put `runned();` after all, otherwhise the `Thread` will ALWAYS run.
